@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ParkAhead.Api/ParkAhead.Api.csproj" />
+    <Project Path="src/ParkAhead.Application/ParkAhead.Application.csproj" />
+    <Project Path="src/ParkAhead.Domain/ParkAhead.Domain.csproj" />
+    <Project Path="src/ParkAhead.Infrastructure/ParkAhead.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ParkAhead.Tests/ParkAhead.Tests.csproj" />
+  </Folder>
+</Solution>

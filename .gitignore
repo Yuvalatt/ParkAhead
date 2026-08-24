@@ -1,0 +1,22 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+*.user
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+*.local
+
+# Environment variables
+.env
+
+# IDE / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
