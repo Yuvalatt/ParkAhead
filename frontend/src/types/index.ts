@@ -3,6 +3,7 @@ export type RiskLevel = 'Low' | 'Medium' | 'High'
 export interface MonitoredArea {
   id: string
   name: string
+  address: string
   latitude: number
   longitude: number
   radiusMeters: number

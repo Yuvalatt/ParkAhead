@@ -10,6 +10,8 @@ namespace ParkAhead.Tests.MonitoredAreas;
 /// </summary>
 public class MonitoredAreasApiTests : IClassFixture<ParkAheadApiFactory>
 {
+    private const string ValidAddress = "1 Rothschild Blvd, Tel Aviv-Yafo, Israel";
+
     private readonly HttpClient _client;
 
     public MonitoredAreasApiTests(ParkAheadApiFactory factory)
@@ -20,7 +22,7 @@ public class MonitoredAreasApiTests : IClassFixture<ParkAheadApiFactory>
     [Fact]
     public async Task Post_with_valid_body_returns_201_with_location_header()
     {
-        var request = new CreateMonitoredAreaRequest("Home", 32.08, 34.78, 1500);
+        var request = new CreateMonitoredAreaRequest("Home", ValidAddress, 32.08, 34.78, 1500);
 
         var response = await _client.PostAsJsonAsync("/api/monitored-areas", request);
 
@@ -29,15 +31,17 @@ public class MonitoredAreasApiTests : IClassFixture<ParkAheadApiFactory>
 
         var body = await response.Content.ReadFromJsonAsync<MonitoredAreaResponse>();
         Assert.Equal("Home", body!.Name);
+        Assert.Equal(ValidAddress, body.Address);
     }
 
     [Theory]
-    [InlineData("", 32.08, 34.78, 1500)] // missing name
-    [InlineData("Home", 90.01, 34.78, 1500)] // latitude out of range
-    [InlineData("Home", 32.08, 34.78, 0)] // non-positive radius
-    public async Task Post_with_invalid_body_returns_400(string name, double lat, double lng, double radius)
+    [InlineData("", ValidAddress, 32.08, 34.78, 1500)] // missing name
+    [InlineData("Home", "", 32.08, 34.78, 1500)] // missing address
+    [InlineData("Home", ValidAddress, 90.01, 34.78, 1500)] // latitude out of range
+    [InlineData("Home", ValidAddress, 32.08, 34.78, 0)] // non-positive radius
+    public async Task Post_with_invalid_body_returns_400(string name, string address, double lat, double lng, double radius)
     {
-        var request = new CreateMonitoredAreaRequest(name, lat, lng, radius);
+        var request = new CreateMonitoredAreaRequest(name, address, lat, lng, radius);
 
         var response = await _client.PostAsJsonAsync("/api/monitored-areas", request);
 

@@ -13,5 +13,6 @@ public class MonitoredAreaConfiguration : IEntityTypeConfiguration<MonitoredArea
         builder.HasKey(a => a.Id);
 
         builder.Property(a => a.Name).IsRequired().HasMaxLength(200);
+        builder.Property(a => a.Address).IsRequired().HasMaxLength(500);
     }
 }

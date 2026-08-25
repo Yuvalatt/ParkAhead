@@ -9,6 +9,9 @@ public class MonitoredArea
 
     public string Name { get; set; } = string.Empty;
 
+    /// <summary>Formatted address as resolved by the geocoding source (e.g. Google Places) at creation time.</summary>
+    public string Address { get; set; } = string.Empty;
+
     public double Latitude { get; set; }
 
     public double Longitude { get; set; }

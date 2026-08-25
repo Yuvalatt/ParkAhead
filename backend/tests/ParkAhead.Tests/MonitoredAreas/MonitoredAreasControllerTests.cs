@@ -19,11 +19,14 @@ public class MonitoredAreasControllerTests
         return new MonitoredAreasController(dbContext);
     }
 
+    private static CreateMonitoredAreaRequest HomeRequest(string name = "Home") =>
+        new(name, "1 Rothschild Blvd, Tel Aviv-Yafo, Israel", 32.08, 34.78, 1500);
+
     [Fact]
     public async Task Create_returns_201_and_persists_the_area()
     {
         var controller = CreateController(out var dbContext);
-        var request = new CreateMonitoredAreaRequest("Home", 32.08, 34.78, 1500);
+        var request = HomeRequest();
 
         var result = await controller.Create(request, CancellationToken.None);
 
@@ -31,6 +34,7 @@ public class MonitoredAreasControllerTests
         Assert.Equal(StatusCodes.Status201Created, created.StatusCode);
         var response = Assert.IsType<MonitoredAreaResponse>(created.Value);
         Assert.Equal("Home", response.Name);
+        Assert.Equal("1 Rothschild Blvd, Tel Aviv-Yafo, Israel", response.Address);
 
         Assert.Equal(1, await dbContext.MonitoredAreas.CountAsync());
     }
@@ -39,8 +43,7 @@ public class MonitoredAreasControllerTests
     public async Task GetById_returns_the_area_when_it_exists()
     {
         var controller = CreateController(out var dbContext);
-        var createResult = await controller.Create(
-            new CreateMonitoredAreaRequest("Home", 32.08, 34.78, 1500), CancellationToken.None);
+        var createResult = await controller.Create(HomeRequest(), CancellationToken.None);
         var created = (MonitoredAreaResponse)((CreatedAtActionResult)createResult.Result!).Value!;
 
         var result = await controller.GetById(created.Id, CancellationToken.None);
@@ -64,8 +67,8 @@ public class MonitoredAreasControllerTests
     public async Task GetAll_returns_every_persisted_area()
     {
         var controller = CreateController(out _);
-        await controller.Create(new CreateMonitoredAreaRequest("Home", 32.08, 34.78, 1500), CancellationToken.None);
-        await controller.Create(new CreateMonitoredAreaRequest("Office", 32.06, 34.77, 500), CancellationToken.None);
+        await controller.Create(HomeRequest(), CancellationToken.None);
+        await controller.Create(HomeRequest("Office"), CancellationToken.None);
 
         var result = await controller.GetAll(CancellationToken.None);
 
@@ -78,8 +81,7 @@ public class MonitoredAreasControllerTests
     public async Task Delete_removes_an_existing_area_and_returns_204()
     {
         var controller = CreateController(out var dbContext);
-        var createResult = await controller.Create(
-            new CreateMonitoredAreaRequest("Home", 32.08, 34.78, 1500), CancellationToken.None);
+        var createResult = await controller.Create(HomeRequest(), CancellationToken.None);
         var created = (MonitoredAreaResponse)((CreatedAtActionResult)createResult.Result!).Value!;
 
         var result = await controller.Delete(created.Id, CancellationToken.None);
