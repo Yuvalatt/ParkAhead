@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using ParkAhead.Infrastructure;
+using ParkAhead.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,18 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Applies pending migrations on startup so `docker compose up` is a self-contained demo
+// with no separate migration step required. Guarded to IsRelational() so integration tests
+// can swap in the EF Core InMemory provider, which doesn't support migrations.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ParkAheadDbContext>();
+    if (dbContext.Database.IsRelational())
+    {
+        await dbContext.Database.MigrateAsync();
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -36,3 +50,6 @@ app.MapGet("/api/health", () => Results.Ok(new { status = "healthy" }));
 app.MapControllers();
 
 app.Run();
+
+// Exposes the generated Program class to WebApplicationFactory<Program> in the test project.
+public partial class Program;
