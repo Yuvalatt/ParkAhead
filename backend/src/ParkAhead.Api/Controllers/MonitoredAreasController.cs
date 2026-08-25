@@ -47,6 +47,7 @@ public class MonitoredAreasController : ControllerBase
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
+            AreaType = request.AreaType,
             Address = request.Address,
             Latitude = request.Latitude,
             Longitude = request.Longitude,

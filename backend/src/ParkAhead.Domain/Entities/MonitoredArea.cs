@@ -1,3 +1,5 @@
+using ParkAhead.Domain.Enums;
+
 namespace ParkAhead.Domain.Entities;
 
 /// <summary>
@@ -8,6 +10,8 @@ public class MonitoredArea
     public Guid Id { get; set; }
 
     public string Name { get; set; } = string.Empty;
+
+    public AreaType AreaType { get; set; }
 
     /// <summary>Formatted address as resolved by the geocoding source (e.g. Google Places) at creation time.</summary>
     public string Address { get; set; } = string.Empty;

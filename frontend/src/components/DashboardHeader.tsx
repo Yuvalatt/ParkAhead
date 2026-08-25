@@ -1,5 +1,6 @@
 import { formatRadius } from '../lib/formatRadius'
 import type { MonitoredArea } from '../types'
+import { AreaTypeIcon } from './AreaTypeIcon'
 
 interface DashboardHeaderProps {
   areas: MonitoredArea[]
@@ -23,7 +24,8 @@ export function DashboardHeader({ areas, selectedArea, onSelectArea, onAddArea }
         <p className="tracking-line">
           {selectedArea ? (
             <>
-              Tracking: <strong>{selectedArea.name}</strong> · {selectedArea.address} ·{' '}
+              Tracking: <AreaTypeIcon type={selectedArea.areaType} size={15} className="tracking-icon" />{' '}
+              <strong>{selectedArea.name}</strong> · {selectedArea.address} ·{' '}
               {formatRadius(selectedArea.radiusMeters)} radius
             </>
           ) : (
@@ -33,18 +35,21 @@ export function DashboardHeader({ areas, selectedArea, onSelectArea, onAddArea }
 
         <div className="header-actions">
           {areas.length > 1 && (
-            <select
-              className="area-select"
-              aria-label="Change monitored area"
-              value={selectedArea?.id ?? ''}
-              onChange={(e) => onSelectArea(e.target.value)}
-            >
-              {areas.map((area) => (
-                <option key={area.id} value={area.id}>
-                  {area.name}
-                </option>
-              ))}
-            </select>
+            <div className="area-select-wrap">
+              {selectedArea && <AreaTypeIcon type={selectedArea.areaType} size={16} />}
+              <select
+                className="area-select"
+                aria-label="Change monitored area"
+                value={selectedArea?.id ?? ''}
+                onChange={(e) => onSelectArea(e.target.value)}
+              >
+                {areas.map((area) => (
+                  <option key={area.id} value={area.id}>
+                    {area.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
           <button type="button" className="btn-secondary" onClick={onAddArea}>
             {selectedArea ? 'Add area' : 'Add your first area'}

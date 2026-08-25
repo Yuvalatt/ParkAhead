@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using ParkAhead.Infrastructure;
 using ParkAhead.Infrastructure.Persistence;
@@ -6,7 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 const string FrontendCorsPolicy = "Frontend";
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    // Enums serialize as their string name (e.g. "Home") rather than a numeric index,
+    // matching the frontend's string-literal-union types.
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

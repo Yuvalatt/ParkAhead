@@ -74,6 +74,39 @@ h1, h2, h3 {
   opacity: 0.6;
 }
 
+.segmented-control {
+  margin-top: 4px;
+  display: flex;
+  gap: 6px;
+}
+
+.segmented-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.segmented-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.segmented-option--active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text-h);
+}
+
 .error-text {
   color: var(--high);
   font-size: 13px;
@@ -207,13 +240,32 @@ h1, h2, h3 {
   flex-wrap: wrap;
 }
 
-.area-select {
-  padding: 7px 10px;
+.area-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 0 10px;
   border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--surface);
+  color: var(--accent);
+}
+
+.area-select {
+  padding: 7px 8px 7px 0;
+  border: none;
+  background: none;
   color: var(--text-h);
   font-size: 13px;
+}
+
+.area-select:focus {
+  outline: none;
+}
+
+.tracking-icon {
+  vertical-align: -2px;
+  color: var(--accent);
 }
 
 /* Summary cards */
@@ -519,8 +571,12 @@ h1, h2, h3 {
   }
 
   .btn-secondary,
-  .area-select {
+  .area-select-wrap {
     flex: 1;
+  }
+
+  .area-select {
+    width: 100%;
   }
 
   .risk-card-header {

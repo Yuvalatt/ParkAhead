@@ -1,16 +1,19 @@
 import { useState, type FormEvent } from 'react'
 import { api } from '../api/client'
-import type { MonitoredArea } from '../types'
+import type { AreaType, MonitoredArea } from '../types'
 import { AddressAutocompleteInput, type SelectedPlace } from './AddressAutocompleteInput'
+import { AreaTypeIcon } from './AreaTypeIcon'
 
 interface CreateAreaFormProps {
   onCreated: (area: MonitoredArea) => void
 }
 
 const DEFAULT_RADIUS_METERS = 1000
+const AREA_TYPES: AreaType[] = ['Home', 'Work', 'Other']
 
 export function CreateAreaForm({ onCreated }: CreateAreaFormProps) {
   const [name, setName] = useState('')
+  const [areaType, setAreaType] = useState<AreaType>('Home')
   const [addressText, setAddressText] = useState('')
   const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(null)
   const [radiusMeters, setRadiusMeters] = useState(DEFAULT_RADIUS_METERS)
@@ -40,6 +43,7 @@ export function CreateAreaForm({ onCreated }: CreateAreaFormProps) {
     try {
       const created = await api.createMonitoredArea({
         name: name.trim(),
+        areaType,
         address: selectedPlace.address,
         latitude: selectedPlace.latitude,
         longitude: selectedPlace.longitude,
@@ -48,6 +52,7 @@ export function CreateAreaForm({ onCreated }: CreateAreaFormProps) {
 
       onCreated(created)
       setName('')
+      setAreaType('Home')
       setAddressText('')
       setSelectedPlace(null)
       setRadiusMeters(DEFAULT_RADIUS_METERS)
@@ -70,6 +75,26 @@ export function CreateAreaForm({ onCreated }: CreateAreaFormProps) {
           disabled={submitting}
         />
       </label>
+
+      <div className="field">
+        Type
+        <div className="segmented-control" role="radiogroup" aria-label="Area type">
+          {AREA_TYPES.map((option) => (
+            <button
+              key={option}
+              type="button"
+              role="radio"
+              aria-checked={areaType === option}
+              className={`segmented-option${areaType === option ? ' segmented-option--active' : ''}`}
+              onClick={() => setAreaType(option)}
+              disabled={submitting}
+            >
+              <AreaTypeIcon type={option} size={16} />
+              {option}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <label className="field">
         Address

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ParkAhead.Domain.Enums;
 
 namespace ParkAhead.Application.MonitoredAreas;
 
@@ -6,6 +7,7 @@ namespace ParkAhead.Application.MonitoredAreas;
 // ASP.NET Core's model validator throws at request time if record validation metadata lives on the property.
 public record CreateMonitoredAreaRequest(
     [Required, MaxLength(200)] string Name,
+    [EnumDataType(typeof(AreaType))] AreaType AreaType,
     // The formatted address as resolved by the frontend's geocoding source (Google Places).
     // Stored for display; latitude/longitude are still validated below regardless of origin.
     [Required, MaxLength(500)] string Address,

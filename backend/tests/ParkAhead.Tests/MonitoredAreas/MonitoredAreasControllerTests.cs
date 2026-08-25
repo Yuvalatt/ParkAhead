@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkAhead.Api.Controllers;
 using ParkAhead.Application.MonitoredAreas;
+using ParkAhead.Domain.Enums;
 using ParkAhead.Infrastructure.Persistence;
 
 namespace ParkAhead.Tests.MonitoredAreas;
@@ -19,8 +20,8 @@ public class MonitoredAreasControllerTests
         return new MonitoredAreasController(dbContext);
     }
 
-    private static CreateMonitoredAreaRequest HomeRequest(string name = "Home") =>
-        new(name, "1 Rothschild Blvd, Tel Aviv-Yafo, Israel", 32.08, 34.78, 1500);
+    private static CreateMonitoredAreaRequest HomeRequest(string name = "Home", AreaType areaType = AreaType.Home) =>
+        new(name, areaType, "1 Rothschild Blvd, Tel Aviv-Yafo, Israel", 32.08, 34.78, 1500);
 
     [Fact]
     public async Task Create_returns_201_and_persists_the_area()
@@ -34,9 +35,24 @@ public class MonitoredAreasControllerTests
         Assert.Equal(StatusCodes.Status201Created, created.StatusCode);
         var response = Assert.IsType<MonitoredAreaResponse>(created.Value);
         Assert.Equal("Home", response.Name);
+        Assert.Equal(AreaType.Home, response.AreaType);
         Assert.Equal("1 Rothschild Blvd, Tel Aviv-Yafo, Israel", response.Address);
 
         Assert.Equal(1, await dbContext.MonitoredAreas.CountAsync());
+    }
+
+    [Theory]
+    [InlineData(AreaType.Home)]
+    [InlineData(AreaType.Work)]
+    [InlineData(AreaType.Other)]
+    public async Task Create_persists_the_chosen_area_type(AreaType areaType)
+    {
+        var controller = CreateController(out var dbContext);
+
+        await controller.Create(HomeRequest(areaType: areaType), CancellationToken.None);
+
+        var saved = await dbContext.MonitoredAreas.SingleAsync();
+        Assert.Equal(areaType, saved.AreaType);
     }
 
     [Fact]
@@ -68,7 +84,7 @@ public class MonitoredAreasControllerTests
     {
         var controller = CreateController(out _);
         await controller.Create(HomeRequest(), CancellationToken.None);
-        await controller.Create(HomeRequest("Office"), CancellationToken.None);
+        await controller.Create(HomeRequest("Office", AreaType.Work), CancellationToken.None);
 
         var result = await controller.GetAll(CancellationToken.None);
 
