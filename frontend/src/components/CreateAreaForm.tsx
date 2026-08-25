@@ -59,7 +59,7 @@ export function CreateAreaForm({ onCreated }: CreateAreaFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card" style={{ display: 'grid', gap: 14, maxWidth: 420 }}>
+    <form onSubmit={handleSubmit} className="area-form">
       <label className="field">
         Name
         <input

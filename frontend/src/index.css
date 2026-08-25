@@ -1,28 +1,31 @@
+/*
+  ParkAhead ships a single, deliberate dark "product" theme (matching the design reference)
+  rather than following the OS light/dark preference — a light mode is a possible future
+  addition, not an oversight.
+*/
 :root {
-  --text: #3f3f46;
-  --text-h: #18181b;
-  --bg: #fafafa;
-  --surface: #ffffff;
-  --border: #e4e4e7;
-  --accent: #2563eb;
-  --low: #16a34a;
-  --medium: #d97706;
-  --high: #dc2626;
+  --bg: #0b0c10;
+  --surface: #15171d;
+  --surface-raised: #1a1d24;
+  --border: #262933;
+  --text: #a8adb8;
+  --text-h: #f5f6f8;
+  --text-muted: #6b7280;
+
+  --accent: #d97706;
+  --accent-soft: rgba(217, 119, 6, 0.16);
+
+  --low: #22c55e;
+  --low-soft: rgba(34, 197, 94, 0.14);
+  --medium: #f59e0b;
+  --medium-soft: rgba(245, 158, 11, 0.14);
+  --high: #ef4444;
+  --high-soft: rgba(239, 68, 68, 0.14);
 
   font: 16px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
   background: var(--bg);
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #d4d4d8;
-    --text-h: #fafafa;
-    --bg: #18181b;
-    --surface: #232326;
-    --border: #3f3f46;
-  }
+  color-scheme: dark;
 }
 
 * {
@@ -36,13 +39,16 @@ body {
 h1, h2, h3 {
   color: var(--text-h);
   font-weight: 600;
+  margin: 0;
 }
 
 #root {
-  max-width: 960px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 20px 64px;
 }
+
+/* Form primitives (create-area form, etc.) */
 
 .field {
   display: block;
@@ -59,7 +65,7 @@ h1, h2, h3 {
   border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--surface);
-  color: var(--text);
+  color: var(--text-h);
   font-size: 14px;
   font-family: inherit;
 }
@@ -76,9 +82,14 @@ h1, h2, h3 {
 
 .card {
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px;
+  border-radius: 10px;
+  padding: 16px;
   background: var(--surface);
+}
+
+.area-form {
+  display: grid;
+  gap: 14px;
 }
 
 .button-primary {
@@ -96,4 +107,430 @@ h1, h2, h3 {
 .button-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.btn-secondary {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  color: var(--text-h);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+}
+
+.btn-text {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.btn-text:not(:disabled):hover {
+  color: var(--text-h);
+}
+
+.btn-text:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Dashboard header */
+
+.app-header {
+  margin-bottom: 28px;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-size: 22px;
+}
+
+.tagline {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.tracking-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.tracking-line {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.tracking-line strong {
+  color: var(--text-h);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.area-select {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-h);
+  font-size: 13px;
+}
+
+/* Summary cards */
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title {
+  font-size: 16px;
+}
+
+.demo-pill {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+.summary-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.summary-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  background: var(--surface);
+}
+
+.summary-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-h);
+  line-height: 1;
+}
+
+.summary-value--high {
+  color: var(--high);
+}
+
+.summary-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Risk cards */
+
+.risk-list {
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.risk-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  background: var(--surface);
+}
+
+.risk-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.risk-card-title {
+  font-size: 16px;
+}
+
+.risk-meta {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.risk-badge {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.risk-badge--low {
+  color: var(--low);
+  background: var(--low-soft);
+}
+
+.risk-badge--medium {
+  color: var(--medium);
+  background: var(--medium-soft);
+}
+
+.risk-badge--high {
+  color: var(--high);
+  background: var(--high-soft);
+}
+
+.progress-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+.progress-track {
+  margin-top: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.progress-fill--low {
+  background: var(--low);
+}
+
+.progress-fill--medium {
+  background: var(--medium);
+}
+
+.progress-fill--high {
+  background: var(--high);
+}
+
+.risk-reason {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.risk-card-footer {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Toggle switch */
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  width: 34px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.toggle input:checked + .toggle-track {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.toggle input:checked + .toggle-track .toggle-thumb {
+  transform: translateX(14px);
+  background: var(--accent);
+}
+
+/* Empty state */
+
+.empty-state {
+  margin-top: 12px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 40px 24px;
+  text-align: center;
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.empty-state-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.empty-state .tagline {
+  max-width: 420px;
+}
+
+/* Modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-close {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.modal-close:hover {
+  color: var(--text-h);
+}
+
+/* Responsive */
+
+@media (max-width: 640px) {
+  #root {
+    padding: 16px 14px 48px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tracking-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .btn-secondary,
+  .area-select {
+    flex: 1;
+  }
+
+  .risk-card-header {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
 }
