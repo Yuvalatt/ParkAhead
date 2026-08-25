@@ -9,8 +9,6 @@ public class ParkAheadDbContext : DbContext
     {
     }
 
-    public DbSet<Event> Events => Set<Event>();
-
     public DbSet<MonitoredArea> MonitoredAreas => Set<MonitoredArea>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

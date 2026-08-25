@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkAhead.Api.Controllers;
 using ParkAhead.Application.MonitoredAreas;
+using ParkAhead.Application.RiskForecast;
 using ParkAhead.Domain.Enums;
+using ParkAhead.Infrastructure.EventSources;
 using ParkAhead.Infrastructure.Persistence;
 
 namespace ParkAhead.Tests.MonitoredAreas;
@@ -17,7 +19,8 @@ public class MonitoredAreasControllerTests
             .Options;
 
         dbContext = new ParkAheadDbContext(options);
-        return new MonitoredAreasController(dbContext);
+        var riskForecastService = new RiskForecastService(new MockEventSource());
+        return new MonitoredAreasController(dbContext, riskForecastService);
     }
 
     private static CreateMonitoredAreaRequest HomeRequest(string name = "Home", AreaType areaType = AreaType.Home) =>

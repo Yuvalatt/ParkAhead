@@ -415,10 +415,23 @@ h1, h2, h3 {
   background: var(--high);
 }
 
-.risk-reason {
+.risk-reasons {
   margin: 14px 0 0;
+  padding-left: 18px;
   font-size: 13px;
   color: var(--text);
+  display: grid;
+  gap: 4px;
+}
+
+.demo-tag {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .risk-card-footer {

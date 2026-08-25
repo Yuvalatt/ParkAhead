@@ -2,6 +2,8 @@ export type RiskLevel = 'Low' | 'Medium' | 'High'
 
 export type AreaType = 'Home' | 'Work' | 'Other'
 
+export type EventCategory = 'Concert' | 'Sports' | 'Festival' | 'Conference' | 'Other'
+
 export interface MonitoredArea {
   id: string
   name: string
@@ -12,18 +14,27 @@ export interface MonitoredArea {
   radiusMeters: number
 }
 
-export interface ContributingEvent {
+export interface EventRisk {
   eventId: string
   title: string
   venueName: string | null
-  distanceMeters: number
-  startDateTime: string
-  reason: string
+  startTime: string
+  category: EventCategory
+  distanceKm: number
+  estimatedAttendance: number | null
+  riskScore: number
+  riskLevel: RiskLevel
+  reasons: string[]
 }
 
-export interface RiskForecastDay {
-  date: string
-  riskLevel: RiskLevel
-  riskScore: number
-  contributingEvents: ContributingEvent[]
+export interface RiskForecastSummary {
+  upcomingEventCount: number
+  highRiskEventCount: number
+}
+
+export interface RiskForecast {
+  monitoredArea: MonitoredArea
+  generatedAt: string
+  summary: RiskForecastSummary
+  events: EventRisk[]
 }

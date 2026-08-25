@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ParkAhead.Application.MonitoredAreas;
+using ParkAhead.Application.RiskForecast;
 using ParkAhead.Domain.Entities;
 using ParkAhead.Infrastructure.Persistence;
 
@@ -11,10 +12,12 @@ namespace ParkAhead.Api.Controllers;
 public class MonitoredAreasController : ControllerBase
 {
     private readonly ParkAheadDbContext _dbContext;
+    private readonly RiskForecastService _riskForecastService;
 
-    public MonitoredAreasController(ParkAheadDbContext dbContext)
+    public MonitoredAreasController(ParkAheadDbContext dbContext, RiskForecastService riskForecastService)
     {
         _dbContext = dbContext;
+        _riskForecastService = riskForecastService;
     }
 
     [HttpGet]
@@ -76,5 +79,21 @@ public class MonitoredAreasController : ControllerBase
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return NoContent();
+    }
+
+    [HttpGet("{id:guid}/risk-forecast")]
+    public async Task<ActionResult<RiskForecastResponse>> GetRiskForecast(Guid id, CancellationToken cancellationToken)
+    {
+        var area = await _dbContext.MonitoredAreas
+            .AsNoTracking()
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+        if (area is null)
+        {
+            return NotFound();
+        }
+
+        var forecast = await _riskForecastService.GenerateForecastAsync(area, cancellationToken);
+        return Ok(forecast);
     }
 }

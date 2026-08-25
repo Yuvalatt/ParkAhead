@@ -7,10 +7,7 @@ interface SummaryCardsProps {
 export function SummaryCards({ upcomingEventsCount, highRiskCount, activeRemindersCount }: SummaryCardsProps) {
   return (
     <div>
-      <div className="section-title-row">
-        <h2 className="section-title">Summary</h2>
-        <span className="demo-pill">Demo data</span>
-      </div>
+      <h2 className="section-title">Summary</h2>
       <div className="summary-grid">
         <div className="summary-card">
           <div className="summary-value">{upcomingEventsCount}</div>
@@ -23,6 +20,7 @@ export function SummaryCards({ upcomingEventsCount, highRiskCount, activeReminde
         <div className="summary-card">
           <div className="summary-value">{activeRemindersCount}</div>
           <div className="summary-label">reminders on</div>
+          <div className="demo-tag">Demo — not yet wired up</div>
         </div>
       </div>
     </div>

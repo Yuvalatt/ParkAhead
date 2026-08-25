@@ -1,14 +1,15 @@
 import { useState } from 'react'
-import type { MockRiskEvent } from '../lib/mockRiskData'
+import { formatDistance, formatEventTime } from '../lib/format'
+import type { EventRisk, RiskLevel } from '../types'
 import { RiskLevelBadge } from './RiskLevelBadge'
 
 interface RiskCardProps {
-  event: MockRiskEvent
+  event: EventRisk
   reminderOn: boolean
   onToggleReminder: () => void
 }
 
-const FILL_CLASS_BY_LEVEL: Record<MockRiskEvent['riskLevel'], string> = {
+const FILL_CLASS_BY_LEVEL: Record<RiskLevel, string> = {
   Low: 'progress-fill progress-fill--low',
   Medium: 'progress-fill progress-fill--medium',
   High: 'progress-fill progress-fill--high',
@@ -28,7 +29,9 @@ export function RiskCard({ event, reminderOn, onToggleReminder }: RiskCardProps)
         <div>
           <h3 className="risk-card-title">{event.title}</h3>
           <div className="risk-meta">
-            {event.category} · {event.when} · {event.distanceLabel}
+            {event.category}
+            {event.venueName ? ` · ${event.venueName}` : ''} · {formatEventTime(event.startTime)} ·{' '}
+            {formatDistance(event.distanceKm)}
           </div>
         </div>
         <RiskLevelBadge level={event.riskLevel} />
@@ -36,16 +39,17 @@ export function RiskCard({ event, reminderOn, onToggleReminder }: RiskCardProps)
 
       <div className="progress-row">
         <span>Parking pressure</span>
-        <span>{event.parkingPressurePercent}%</span>
+        <span>{event.riskScore}%</span>
       </div>
       <div className="progress-track">
-        <div
-          className={FILL_CLASS_BY_LEVEL[event.riskLevel]}
-          style={{ width: `${event.parkingPressurePercent}%` }}
-        />
+        <div className={FILL_CLASS_BY_LEVEL[event.riskLevel]} style={{ width: `${event.riskScore}%` }} />
       </div>
 
-      <p className="risk-reason">{event.reason}</p>
+      <ul className="risk-reasons">
+        {event.reasons.map((reason) => (
+          <li key={reason}>{reason}</li>
+        ))}
+      </ul>
 
       <div className="risk-card-footer">
         <label className="toggle">
@@ -53,7 +57,7 @@ export function RiskCard({ event, reminderOn, onToggleReminder }: RiskCardProps)
           <span className="toggle-track">
             <span className="toggle-thumb" />
           </span>
-          <span>Remind me</span>
+          <span>Remind me (demo)</span>
         </label>
 
         <button type="button" className="btn-text" onClick={handleSimulateAlert} disabled={!reminderOn}>

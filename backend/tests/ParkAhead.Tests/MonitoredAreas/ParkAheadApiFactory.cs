@@ -14,6 +14,12 @@ namespace ParkAhead.Tests.MonitoredAreas;
 /// </summary>
 public class ParkAheadApiFactory : WebApplicationFactory<Program>
 {
+    // AddDbContext re-invokes the options-builder delegate on every DbContext instantiation
+    // (i.e. every request, since it's scoped) — generating the database name inside that
+    // delegate would hand each request its own empty database. Capturing it once here means
+    // every request in a test shares the same in-memory store.
+    private readonly string _databaseName = Guid.NewGuid().ToString();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureAppConfiguration((_, config) =>
@@ -28,7 +34,7 @@ public class ParkAheadApiFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<DbContextOptions<ParkAheadDbContext>>();
             services.AddDbContext<ParkAheadDbContext>(options =>
-                options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+                options.UseInMemoryDatabase(_databaseName));
         });
     }
 }

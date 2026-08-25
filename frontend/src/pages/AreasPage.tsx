@@ -5,14 +5,9 @@ import { DashboardHeader } from '../components/DashboardHeader'
 import { Modal } from '../components/Modal'
 import { RiskCard } from '../components/RiskCard'
 import { SummaryCards } from '../components/SummaryCards'
-import { MOCK_HIGH_RISK_COUNT, MOCK_RISK_EVENTS } from '../lib/mockRiskData'
-import type { MonitoredArea } from '../types'
+import type { MonitoredArea, RiskForecast } from '../types'
 
 const SELECTED_AREA_STORAGE_KEY = 'parkahead:selectedAreaId'
-
-// A couple of reminders start "on" so the dashboard doesn't look inert on first load —
-// this is UI-only state (see mockRiskData.ts), not backed by any notification system yet.
-const DEFAULT_REMINDERS: Record<string, boolean> = { 'mock-1': true, 'mock-4': true }
 
 export function AreasPage() {
   const [areas, setAreas] = useState<MonitoredArea[]>([])
@@ -20,7 +15,15 @@ export function AreasPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
-  const [reminders, setReminders] = useState(DEFAULT_REMINDERS)
+
+  // Reminders are frontend-only demo state — there is no backend/notification support yet
+  // (see RiskCard). Keyed by the real event ids returned from the forecast, so it resets
+  // whenever the forecast changes.
+  const [reminders, setReminders] = useState<Record<string, boolean>>({})
+
+  const [forecast, setForecast] = useState<RiskForecast | null>(null)
+  const [forecastLoading, setForecastLoading] = useState(false)
+  const [forecastError, setForecastError] = useState<string | null>(null)
 
   useEffect(() => {
     api
@@ -34,6 +37,37 @@ export function AreasPage() {
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    if (!selectedAreaId) {
+      setForecast(null)
+      return
+    }
+
+    let cancelled = false
+    setForecastLoading(true)
+    setForecastError(null)
+    setReminders({})
+
+    api
+      .getRiskForecast(selectedAreaId)
+      .then((result) => {
+        if (!cancelled) setForecast(result)
+      })
+      .catch((err: Error) => {
+        if (!cancelled) {
+          setForecast(null)
+          setForecastError(err.message)
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setForecastLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [selectedAreaId])
 
   function selectArea(id: string) {
     setSelectedAreaId(id)
@@ -80,26 +114,35 @@ export function AreasPage() {
       {!loading && !error && selectedArea && (
         <>
           <SummaryCards
-            upcomingEventsCount={MOCK_RISK_EVENTS.length}
-            highRiskCount={MOCK_HIGH_RISK_COUNT}
+            upcomingEventsCount={forecast?.summary.upcomingEventCount ?? 0}
+            highRiskCount={forecast?.summary.highRiskEventCount ?? 0}
             activeRemindersCount={activeRemindersCount}
           />
 
-          <div className="section-title-row" style={{ marginTop: 28 }}>
-            <h2 className="section-title">Upcoming parking risk</h2>
-            <span className="demo-pill">Demo data</span>
-          </div>
+          <h2 className="section-title" style={{ marginTop: 28 }}>
+            Upcoming parking risk
+          </h2>
 
-          <div className="risk-list">
-            {MOCK_RISK_EVENTS.map((event) => (
-              <RiskCard
-                key={event.id}
-                event={event}
-                reminderOn={!!reminders[event.id]}
-                onToggleReminder={() => toggleReminder(event.id)}
-              />
-            ))}
-          </div>
+          {forecastLoading && <p>Checking nearby events…</p>}
+          {forecastError && (
+            <p className="error-text">Could not load the risk forecast for this area: {forecastError}</p>
+          )}
+          {!forecastLoading && !forecastError && forecast && forecast.events.length === 0 && (
+            <p>No upcoming events found near this area in the next 7 days.</p>
+          )}
+
+          {!forecastLoading && !forecastError && forecast && forecast.events.length > 0 && (
+            <div className="risk-list">
+              {forecast.events.map((event) => (
+                <RiskCard
+                  key={event.eventId}
+                  event={event}
+                  reminderOn={!!reminders[event.eventId]}
+                  onToggleReminder={() => toggleReminder(event.eventId)}
+                />
+              ))}
+            </div>
+          )}
         </>
       )}
 

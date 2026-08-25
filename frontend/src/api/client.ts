@@ -1,4 +1,4 @@
-import type { MonitoredArea, RiskForecastDay } from '../types'
+import type { MonitoredArea, RiskForecast } from '../types'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000'
 
@@ -24,6 +24,6 @@ export const api = {
       body: JSON.stringify(area),
     }),
 
-  getRiskForecast: (areaId: string, days = 7) =>
-    request<RiskForecastDay[]>(`/api/monitored-areas/${areaId}/risk-forecast?days=${days}`),
+  getRiskForecast: (areaId: string) =>
+    request<RiskForecast>(`/api/monitored-areas/${areaId}/risk-forecast`),
 }
